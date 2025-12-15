@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Header } from '@/components/Header';
+import { BottomNavigation } from '@/components/BottomNavigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { OrganizationsTab } from '@/components/admin/OrganizationsTab';
 import { UsersTab } from '@/components/admin/UsersTab';
@@ -17,7 +18,7 @@ export default function Admin() {
         <title>Admin Panel | Badbaado Aid Track</title>
         <meta name="description" content="Admin panel for managing organizations, users, and system settings." />
       </Helmet>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background pb-20">
         <Header />
         <main className="container mx-auto px-4 py-6">
           <div className="mb-6">
@@ -61,6 +62,7 @@ export default function Admin() {
             </div>
           </Tabs>
         </main>
+        <BottomNavigation />
       </div>
     </>
   );

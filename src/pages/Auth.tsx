@@ -134,10 +134,7 @@ export default function Auth() {
               <img src={logo} alt="Badbaado Aid Track Logo" className="w-[140%] h-[140%] object-cover" />
             </div>
             <h1 className="text-3xl font-bold text-[#2E8B57]">Badbaado Aid Track</h1>
-            <p className="text-[#1E3A5F] text-center mt-2 font-medium">
-              Humanitarian Aid Coordination System
-            </p>
-            <p className="text-[#2E8B57] text-center mt-1 italic text-sm">
+            <p className="text-[#2E8B57] text-center mt-2 italic text-sm">
               Right aid, right place, right time
             </p>
           </div>

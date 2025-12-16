@@ -143,7 +143,7 @@ export function ReportsTab() {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <Card>
+      <Card className="admin-card-purple border-2">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <Filter className="h-5 w-5" />
@@ -204,10 +204,10 @@ export function ReportsTab() {
       </Card>
 
       {/* Reports Table */}
-      <Card>
+      <Card className="admin-card-pink border-2">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">
-            Aid Reports ({reports.length})
+            NGO Aid Reports ({reports.length})
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">

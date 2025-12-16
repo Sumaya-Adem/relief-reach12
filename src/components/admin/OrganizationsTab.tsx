@@ -139,22 +139,22 @@ export function OrganizationsTab() {
   }
 
   return (
-    <Card>
+    <Card className="admin-card-green border-2">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <Building2 className="h-5 w-5" />
-          Organizations ({organizations.length})
+          NGO Organizations ({organizations.length})
         </CardTitle>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openCreateDialog}>
+            <Button onClick={openCreateDialog} className="bg-secondary hover:bg-secondary/90">
               <Plus className="h-4 w-4 mr-2" />
-              Add Organization
+              Add NGO
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingOrg ? 'Edit Organization' : 'Add Organization'}</DialogTitle>
+              <DialogTitle>{editingOrg ? 'Edit NGO' : 'Register New NGO'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -233,8 +233,9 @@ export function OrganizationsTab() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={org.is_active ? 'default' : 'secondary'}
-                      className="cursor-pointer"
+                      className={org.is_active 
+                        ? 'bg-pastel-green text-green-800 border-0 cursor-pointer' 
+                        : 'bg-muted text-muted-foreground cursor-pointer'}
                       onClick={() => toggleActive(org)}
                     >
                       {org.is_active ? 'Active' : 'Inactive'}

@@ -108,7 +108,7 @@ export function WarningsTab() {
   }
 
   return (
-    <Card>
+    <Card className="admin-card-orange border-2">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -116,7 +116,7 @@ export function WarningsTab() {
               <AlertTriangle className="h-5 w-5 text-status-duplicate" />
               Duplicate Warnings
               {pendingCount > 0 && (
-                <Badge variant="destructive">{pendingCount} pending</Badge>
+                <Badge className="bg-pastel-orange text-orange-800 border-0">{pendingCount} pending</Badge>
               )}
             </CardTitle>
             <CardDescription>
@@ -217,14 +217,14 @@ export function WarningsTab() {
                   </TableCell>
                   <TableCell>
                     {warning.acknowledged ? (
-                      <Badge variant="secondary">
+                      <Badge className="bg-pastel-green text-green-800 border-0">
                         <Check className="h-3 w-3 mr-1" />
                         Acknowledged
                       </Badge>
                     ) : (
-                      <Badge variant="destructive">
+                      <Badge className="bg-pastel-orange text-orange-800 border-0">
                         <Eye className="h-3 w-3 mr-1" />
-                        Pending
+                        Pending Review
                       </Badge>
                     )}
                   </TableCell>

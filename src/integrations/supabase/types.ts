@@ -265,6 +265,50 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          related_record_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          related_record_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          related_record_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_related_record_id_fkey"
+            columns: ["related_record_id"]
+            isOneToOne: false
+            referencedRelation: "aid_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           contact_email: string | null

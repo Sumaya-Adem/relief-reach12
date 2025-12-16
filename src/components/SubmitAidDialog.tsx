@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
@@ -21,7 +21,7 @@ import {
 import { AidType, AID_TYPE_LABELS } from '@/types/aid';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { AlertTriangle, Calendar, MapPin, Package, Users } from 'lucide-react';
+import { AlertTriangle, Calendar, MapPin, Package, Users, Upload, X, FileImage } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import { AidTypeBadge } from './AidTypeBadge';
@@ -55,6 +55,9 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
   const [notes, setNotes] = useState('');
   const [fieldOfficerName, setFieldOfficerName] = useState('');
   const [duplicateWarning, setDuplicateWarning] = useState<SimpleDuplicateWarning | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch areas from Supabase
   const { data: areas = [] } = useQuery({
@@ -129,6 +132,20 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      const isValid = file.type.startsWith('image/') || file.type === 'application/pdf';
+      const isUnder10MB = file.size <= 10 * 1024 * 1024;
+      return isValid && isUnder10MB;
+    });
+    setSelectedFiles(prev => [...prev, ...validFiles].slice(0, 5)); // Max 5 files
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   // Submit mutation
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -156,6 +173,35 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
         .single();
 
       if (error) throw error;
+
+      // Upload files if any
+      if (selectedFiles.length > 0 && data) {
+        setIsUploading(true);
+        for (const file of selectedFiles) {
+          const fileExt = file.name.split('.').pop();
+          const filePath = `${data.id}/${Date.now()}.${fileExt}`;
+          
+          const { error: uploadError } = await supabase.storage
+            .from('report-evidence')
+            .upload(filePath, file);
+
+          if (!uploadError) {
+            const { data: urlData } = supabase.storage
+              .from('report-evidence')
+              .getPublicUrl(filePath);
+
+            await supabase.from('report_evidence').insert({
+              aid_record_id: data.id,
+              file_url: urlData.publicUrl,
+              file_name: file.name,
+              file_type: file.type,
+              uploaded_by: user.id,
+            });
+          }
+        }
+        setIsUploading(false);
+      }
+
       return data;
     },
     onSuccess: () => {
@@ -176,6 +222,7 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
     },
   });
 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     submitMutation.mutate();
@@ -191,6 +238,7 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
     setNotes('');
     setFieldOfficerName('');
     setDuplicateWarning(null);
+    setSelectedFiles([]);
   };
 
   const selectedArea = areas.find(a => a.id === selectedAreaId);
@@ -367,6 +415,55 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
             />
+          </div>
+
+          {/* File Upload */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-1.5">
+              <FileImage className="w-4 h-4" />
+              Evidence (Photos/Documents)
+            </Label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,application/pdf"
+              multiple
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 transition-colors"
+            >
+              <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">
+                Click to upload images or PDF files
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Max 5 files, 10MB each
+              </p>
+            </div>
+            {selectedFiles.length > 0 && (
+              <div className="space-y-2 mt-2">
+                {selectedFiles.map((file, index) => (
+                  <div key={index} className="flex items-center justify-between bg-muted/50 rounded-md p-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <FileImage className="w-4 h-4 flex-shrink-0 text-primary" />
+                      <span className="text-sm truncate">{file.name}</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => removeFile(index)}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Actions */}

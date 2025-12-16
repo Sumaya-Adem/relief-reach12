@@ -1,4 +1,5 @@
 import { Bell, Check, CheckCheck, AlertCircle, XCircle, Flag, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,7 +14,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNotifications, Notification } from '@/hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
-
 const notificationIcons = {
   report_approved: <Check className="w-4 h-4 text-status-aided" />,
   report_rejected: <XCircle className="w-4 h-4 text-status-unaided" />,
@@ -22,7 +22,15 @@ const notificationIcons = {
 };
 
 export function NotificationsDropdown() {
+  const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+
+  const handleNotificationClick = (notification: Notification) => {
+    markAsRead(notification.id);
+    if (notification.related_record_id) {
+      navigate(`/reports?reportId=${notification.related_record_id}`);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -66,7 +74,7 @@ export function NotificationsDropdown() {
               <NotificationItem
                 key={notification.id}
                 notification={notification}
-                onMarkAsRead={() => markAsRead(notification.id)}
+                onNotificationClick={() => handleNotificationClick(notification)}
               />
             ))
           )}
@@ -78,10 +86,10 @@ export function NotificationsDropdown() {
 
 function NotificationItem({
   notification,
-  onMarkAsRead,
+  onNotificationClick,
 }: {
   notification: Notification;
-  onMarkAsRead: () => void;
+  onNotificationClick: () => void;
 }) {
   return (
     <DropdownMenuItem
@@ -89,7 +97,7 @@ function NotificationItem({
         'flex items-start gap-3 p-3 cursor-pointer',
         !notification.is_read && 'bg-accent/50'
       )}
-      onClick={onMarkAsRead}
+      onClick={onNotificationClick}
     >
       <div className="flex-shrink-0 mt-0.5">
         {notificationIcons[notification.type]}

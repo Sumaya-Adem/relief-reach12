@@ -102,7 +102,7 @@ export function RulesTab() {
   }
 
   return (
-    <Card>
+    <Card className="admin-card-yellow border-2">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Settings className="h-5 w-5" />
@@ -158,8 +158,9 @@ export function RulesTab() {
                 </TableCell>
                 <TableCell>
                   <Badge
-                    variant={rule.is_active ? 'default' : 'secondary'}
-                    className="cursor-pointer"
+                    className={rule.is_active 
+                      ? 'bg-pastel-green text-green-800 border-0 cursor-pointer' 
+                      : 'bg-muted text-muted-foreground cursor-pointer'}
                     onClick={() => toggleActive(rule)}
                   >
                     {rule.is_active ? 'Active' : 'Disabled'}

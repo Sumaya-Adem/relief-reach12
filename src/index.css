@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    /* Humanitarian Aid Theme */
-    --background: 210 25% 97%;
+    /* Humanitarian Aid Theme - Pastel Palette */
+    --background: 210 30% 98%;
     --foreground: 210 50% 20%;
 
     --card: 0 0% 100%;
@@ -24,24 +24,32 @@
     --secondary: 146 50% 36%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 92%;
+    --muted: 210 25% 94%;
     --muted-foreground: 210 20% 45%;
 
-    --accent: 210 30% 90%;
+    --accent: 210 30% 92%;
     --accent-foreground: 210 52% 24%;
 
     /* Red - Unaided/Danger */
     --destructive: 355 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Status Colors */
-    --status-unaided: 355 70% 55%;
-    --status-partial: 36 89% 67%;
-    --status-aided: 146 50% 36%;
-    --status-duplicate: 28 87% 62%;
+    /* Status Colors - Pastel variants */
+    --status-unaided: 355 65% 58%;
+    --status-partial: 40 90% 60%;
+    --status-aided: 146 55% 42%;
+    --status-duplicate: 28 85% 58%;
 
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
+    /* Admin Panel Pastel Colors */
+    --pastel-blue: 210 60% 85%;
+    --pastel-green: 146 50% 85%;
+    --pastel-yellow: 45 90% 85%;
+    --pastel-pink: 340 60% 88%;
+    --pastel-purple: 270 50% 88%;
+    --pastel-orange: 28 80% 85%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
     --ring: 210 52% 24%;
 
     --radius: 0.625rem;
@@ -58,8 +66,8 @@
 
     /* Custom Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(210 20% 20% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(210 20% 20% / 0.1), 0 2px 4px -2px hsl(210 20% 20% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(210 20% 20% / 0.1), 0 4px 6px -4px hsl(210 20% 20% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(210 20% 20% / 0.08), 0 2px 4px -2px hsl(210 20% 20% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(210 20% 20% / 0.08), 0 4px 6px -4px hsl(210 20% 20% / 0.08);
   }
 
   .dark {
@@ -169,6 +177,31 @@
   /* Humanitarian header */
   .humanitarian-header {
     @apply bg-primary text-primary-foreground;
+  }
+
+  /* Admin Panel Pastel Cards */
+  .admin-card-blue {
+    @apply bg-[hsl(var(--pastel-blue)/0.4)] border-[hsl(var(--pastel-blue))];
+  }
+
+  .admin-card-green {
+    @apply bg-[hsl(var(--pastel-green)/0.4)] border-[hsl(var(--pastel-green))];
+  }
+
+  .admin-card-yellow {
+    @apply bg-[hsl(var(--pastel-yellow)/0.4)] border-[hsl(var(--pastel-yellow))];
+  }
+
+  .admin-card-pink {
+    @apply bg-[hsl(var(--pastel-pink)/0.4)] border-[hsl(var(--pastel-pink))];
+  }
+
+  .admin-card-purple {
+    @apply bg-[hsl(var(--pastel-purple)/0.4)] border-[hsl(var(--pastel-purple))];
+  }
+
+  .admin-card-orange {
+    @apply bg-[hsl(var(--pastel-orange)/0.4)] border-[hsl(var(--pastel-orange))];
   }
 }
 

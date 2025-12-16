@@ -216,13 +216,15 @@ export function UsersTab() {
 
   const getRoleBadge = (user: UserProfile) => {
     if (user.role === 'admin') {
-      return <Badge variant="destructive">Admin</Badge>;
+      return <Badge className="bg-[hsl(var(--pastel-purple))] text-purple-800 border-0">Government Admin</Badge>;
     }
     if (user.role === 'ngo_user') {
-      return <Badge variant="secondary">NGO User</Badge>;
+      return <Badge className="bg-[hsl(var(--pastel-green))] text-green-800 border-0">NGO User</Badge>;
     }
     return <Badge variant="outline">No Role</Badge>;
   };
+
+  const isNgoUser = formData.role === 'ngo_user';
 
   if (isLoading) {
     return (
@@ -233,7 +235,7 @@ export function UsersTab() {
   }
 
   return (
-    <Card>
+    <Card className="admin-card-blue border-2">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <Users className="h-5 w-5" />
@@ -241,16 +243,38 @@ export function UsersTab() {
         </CardTitle>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openCreateDialog}>
+            <Button onClick={openCreateDialog} className="bg-primary hover:bg-primary/90">
               <UserPlus className="h-4 w-4 mr-2" />
               Create User
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingUser ? 'Edit User' : 'Create NGO User'}</DialogTitle>
+              <DialogTitle>{editingUser ? 'Edit User' : 'Create New User'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={editingUser ? handleUpdateUser : handleCreateUser} className="space-y-4">
+              {/* Role Selection First */}
+              <div className="space-y-2">
+                <Label htmlFor="role">User Type *</Label>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => setFormData({ ...formData, role: value as 'admin' | 'ngo_user', organization_id: value === 'admin' ? '' : formData.organization_id })}
+                >
+                  <SelectTrigger className={isNgoUser ? 'bg-[hsl(var(--pastel-green)/0.3)]' : 'bg-[hsl(var(--pastel-purple)/0.3)]'}>
+                    <SelectValue placeholder="Select user type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ngo_user">NGO User (Organization Staff)</SelectItem>
+                    <SelectItem value="admin">Government Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {isNgoUser 
+                    ? 'NGO users can submit and view their organization\'s reports' 
+                    : 'Government admins can review and approve all NGO reports'}
+                </p>
+              </div>
+
               {!editingUser && (
                 <>
                   <div className="space-y-2">
@@ -261,6 +285,7 @@ export function UsersTab() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
+                      placeholder="user@example.com"
                     />
                   </div>
                   <div className="space-y-2">
@@ -272,53 +297,54 @@ export function UsersTab() {
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       required
                       minLength={6}
+                      placeholder="Minimum 6 characters"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Share this password with the user so they can login
+                    </p>
                   </div>
                 </>
               )}
+
               <div className="space-y-2">
                 <Label htmlFor="full_name">Full Name</Label>
                 <Input
                   id="full_name"
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  placeholder="Enter full name"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="organization">Organization</Label>
-                <Select
-                  value={formData.organization_id}
-                  onValueChange={(value) => setFormData({ ...formData, organization_id: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select organization" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">No organization</SelectItem>
-                    {organizations.map((org) => (
-                      <SelectItem key={org.id} value={org.id}>
-                        {org.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role *</Label>
-                <Select
-                  value={formData.role}
-                  onValueChange={(value) => setFormData({ ...formData, role: value as 'admin' | 'ngo_user' })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ngo_user">NGO User</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button type="submit" className="w-full" disabled={isSaving}>
+
+              {/* Only show organization for NGO users */}
+              {isNgoUser && (
+                <div className="space-y-2">
+                  <Label htmlFor="organization">Organization *</Label>
+                  <Select
+                    value={formData.organization_id}
+                    onValueChange={(value) => setFormData({ ...formData, organization_id: value })}
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select NGO organization" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {organizations.map((org) => (
+                        <SelectItem key={org.id} value={org.id}>
+                          {org.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {organizations.length === 0 && (
+                    <p className="text-xs text-destructive">
+                      No organizations available. Create an organization first.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" disabled={isSaving || (isNgoUser && !formData.organization_id && !editingUser)}>
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {editingUser ? 'Update' : 'Create'} User
               </Button>
@@ -351,8 +377,12 @@ export function UsersTab() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {user.organization_name || (
-                      <span className="text-muted-foreground">Not assigned</span>
+                    {user.role === 'admin' ? (
+                      <span className="text-muted-foreground italic">Government</span>
+                    ) : (
+                      user.organization_name || (
+                        <span className="text-muted-foreground">Not assigned</span>
+                      )
                     )}
                   </TableCell>
                   <TableCell>{getRoleBadge(user)}</TableCell>

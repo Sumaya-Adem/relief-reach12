@@ -66,6 +66,14 @@ export default {
           aided: "hsl(var(--status-aided))",
           duplicate: "hsl(var(--status-duplicate))",
         },
+        pastel: {
+          blue: "hsl(var(--pastel-blue))",
+          green: "hsl(var(--pastel-green))",
+          yellow: "hsl(var(--pastel-yellow))",
+          pink: "hsl(var(--pastel-pink))",
+          purple: "hsl(var(--pastel-purple))",
+          orange: "hsl(var(--pastel-orange))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

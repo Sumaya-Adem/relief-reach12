@@ -14,46 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_action_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          aid_record_id: string
+          created_at: string
+          id: string
+          new_status: Database["public"]["Enums"]["report_status"] | null
+          notes: string | null
+          previous_status: Database["public"]["Enums"]["report_status"] | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          aid_record_id: string
+          created_at?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["report_status"] | null
+          notes?: string | null
+          previous_status?: Database["public"]["Enums"]["report_status"] | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          aid_record_id?: string
+          created_at?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["report_status"] | null
+          notes?: string | null
+          previous_status?: Database["public"]["Enums"]["report_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_action_logs_aid_record_id_fkey"
+            columns: ["aid_record_id"]
+            isOneToOne: false
+            referencedRelation: "aid_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       aid_records: {
         Row: {
           aid_type: Database["public"]["Enums"]["aid_type"]
+          approved_at: string | null
+          approved_by: string | null
           area_id: string
+          beneficiary_count: number | null
           created_at: string
           created_by: string | null
           delivery_date: string
+          field_officer_name: string | null
+          flag_reason: string | null
+          flagged: boolean | null
           id: string
           is_duplicate_warning: boolean
           notes: string | null
           organization_id: string
           quantity: number
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["report_status"]
           unit: string
           updated_at: string
         }
         Insert: {
           aid_type: Database["public"]["Enums"]["aid_type"]
+          approved_at?: string | null
+          approved_by?: string | null
           area_id: string
+          beneficiary_count?: number | null
           created_at?: string
           created_by?: string | null
           delivery_date: string
+          field_officer_name?: string | null
+          flag_reason?: string | null
+          flagged?: boolean | null
           id?: string
           is_duplicate_warning?: boolean
           notes?: string | null
           organization_id: string
           quantity: number
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
           unit: string
           updated_at?: string
         }
         Update: {
           aid_type?: Database["public"]["Enums"]["aid_type"]
+          approved_at?: string | null
+          approved_by?: string | null
           area_id?: string
+          beneficiary_count?: number | null
           created_at?: string
           created_by?: string | null
           delivery_date?: string
+          field_officer_name?: string | null
+          flag_reason?: string | null
+          flagged?: boolean | null
           id?: string
           is_duplicate_warning?: boolean
           notes?: string | null
           organization_id?: string
           quantity?: number
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["report_status"]
           unit?: string
           updated_at?: string
         }
@@ -271,6 +336,44 @@ export type Database = {
           },
         ]
       }
+      report_evidence: {
+        Row: {
+          aid_record_id: string
+          created_at: string
+          file_name: string
+          file_type: string | null
+          file_url: string
+          id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          aid_record_id: string
+          created_at?: string
+          file_name: string
+          file_type?: string | null
+          file_url: string
+          id?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          aid_record_id?: string
+          created_at?: string
+          file_name?: string
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_evidence_aid_record_id_fkey"
+            columns: ["aid_record_id"]
+            isOneToOne: false
+            referencedRelation: "aid_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -310,6 +413,7 @@ export type Database = {
       aid_type: "water" | "food" | "health" | "cash"
       app_role: "admin" | "ngo_user"
       area_status: "not_aided" | "partially_aided" | "fully_aided"
+      report_status: "pending" | "approved" | "rejected" | "flagged"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -440,6 +544,7 @@ export const Constants = {
       aid_type: ["water", "food", "health", "cash"],
       app_role: ["admin", "ngo_user"],
       area_status: ["not_aided", "partially_aided", "fully_aided"],
+      report_status: ["pending", "approved", "rejected", "flagged"],
     },
   },
 } as const

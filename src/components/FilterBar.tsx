@@ -11,8 +11,9 @@ interface FilterBarProps {
     aidType: string;
     organization: string;
     timePeriod: string;
+    status: string;
   };
-  onFiltersChange: (filters: { aidType: string; organization: string; timePeriod: string }) => void;
+  onFiltersChange: (filters: { aidType: string; organization: string; timePeriod: string; status: string }) => void;
 }
 
 export function FilterBar({ viewMode, onViewModeChange, filters, onFiltersChange }: FilterBarProps) {
@@ -21,7 +22,7 @@ export function FilterBar({ viewMode, onViewModeChange, filters, onFiltersChange
   };
 
   const handleReset = () => {
-    onFiltersChange({ aidType: 'all', organization: 'all', timePeriod: '30' });
+    onFiltersChange({ aidType: 'all', organization: 'all', timePeriod: '30', status: 'all' });
   };
 
   return (

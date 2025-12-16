@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import logo from '@/assets/logo.png';
 import { z } from 'zod';
 
 const emailSchema = z.string().email('Invalid email address').max(255);
@@ -129,8 +130,8 @@ export default function Auth() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-20 h-20 bg-[#2E8B57] rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-              <Shield className="w-12 h-12 text-white" />
+            <div className="w-24 h-24 rounded-2xl flex items-center justify-center mb-4">
+              <img src={logo} alt="Badbaado Aid Track Logo" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-3xl font-bold text-[#2E8B57]">Badbaado Aid Track</h1>
             <p className="text-[#1E3A5F] text-center mt-2 font-medium">

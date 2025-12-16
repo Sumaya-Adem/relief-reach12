@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Loader2, Building2 } from 'lucide-react';
+import { Plus, Pencil, Loader2, Building2, User } from 'lucide-react';
 
 interface Organization {
   id: string;
@@ -30,6 +31,10 @@ export function OrganizationsTab() {
     description: '',
     contact_email: '',
     contact_phone: '',
+    // User account fields
+    user_email: '',
+    user_password: '',
+    user_full_name: '',
   });
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
@@ -57,6 +62,7 @@ export function OrganizationsTab() {
     setIsSaving(true);
 
     if (editingOrg) {
+      // Update existing organization
       const { error } = await supabase
         .from('organizations')
         .update({
@@ -75,26 +81,72 @@ export function OrganizationsTab() {
         fetchOrganizations();
       }
     } else {
-      const { error } = await supabase
+      // Create new organization with user account
+      const { data: orgData, error: orgError } = await supabase
         .from('organizations')
         .insert({
           name: formData.name,
           description: formData.description || null,
           contact_email: formData.contact_email || null,
           contact_phone: formData.contact_phone || null,
-        });
+        })
+        .select()
+        .single();
 
-      if (error) {
-        if (error.message.includes('duplicate')) {
+      if (orgError) {
+        if (orgError.message.includes('duplicate')) {
           toast({ variant: 'destructive', title: 'Error', description: 'An organization with this name already exists' });
         } else {
-          toast({ variant: 'destructive', title: 'Error', description: error.message });
+          toast({ variant: 'destructive', title: 'Error', description: orgError.message });
         }
-      } else {
-        toast({ title: 'Success', description: 'Organization created successfully' });
-        setIsDialogOpen(false);
-        fetchOrganizations();
+        setIsSaving(false);
+        return;
       }
+
+      // Create user account for the NGO
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: formData.user_email,
+        password: formData.user_password,
+        options: {
+          data: { full_name: formData.user_full_name },
+        },
+      });
+
+      if (signUpError) {
+        toast({ variant: 'destructive', title: 'Error creating user', description: signUpError.message });
+        // Optionally delete the org if user creation fails
+        await supabase.from('organizations').delete().eq('id', orgData.id);
+        setIsSaving(false);
+        return;
+      }
+
+      if (authData.user) {
+        // Update profile with organization
+        await supabase
+          .from('profiles')
+          .update({ organization_id: orgData.id })
+          .eq('user_id', authData.user.id);
+
+        // Add NGO user role
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: authData.user.id,
+            role: 'ngo_user',
+          });
+
+        if (roleError) {
+          toast({ variant: 'destructive', title: 'Warning', description: 'Organization created but role assignment failed' });
+        } else {
+          toast({ 
+            title: 'Success', 
+            description: `NGO "${formData.name}" registered with user account. Share login credentials with the NGO.` 
+          });
+        }
+      }
+
+      setIsDialogOpen(false);
+      fetchOrganizations();
     }
 
     setIsSaving(false);
@@ -102,7 +154,15 @@ export function OrganizationsTab() {
 
   const openCreateDialog = () => {
     setEditingOrg(null);
-    setFormData({ name: '', description: '', contact_email: '', contact_phone: '' });
+    setFormData({ 
+      name: '', 
+      description: '', 
+      contact_email: '', 
+      contact_phone: '',
+      user_email: '',
+      user_password: '',
+      user_full_name: '',
+    });
     setIsDialogOpen(true);
   };
 
@@ -113,6 +173,9 @@ export function OrganizationsTab() {
       description: org.description || '',
       contact_email: org.contact_email || '',
       contact_phone: org.contact_phone || '',
+      user_email: '',
+      user_password: '',
+      user_full_name: '',
     });
     setIsDialogOpen(true);
   };
@@ -152,48 +215,114 @@ export function OrganizationsTab() {
               Add NGO
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>{editingOrg ? 'Edit NGO' : 'Register New NGO'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
+              {/* Organization Details */}
+              <div className="space-y-3">
+                <h4 className="font-medium text-sm flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Organization Details
+                </h4>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Organization Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                    placeholder="e.g. Red Cross Somalia"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Brief description of the NGO"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="contact_email">Contact Email</Label>
+                    <Input
+                      id="contact_email"
+                      type="email"
+                      value={formData.contact_email}
+                      onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                      placeholder="org@email.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="contact_phone">Contact Phone</Label>
+                    <Input
+                      id="contact_phone"
+                      value={formData.contact_phone}
+                      onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                      placeholder="+252..."
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="contact_email">Contact Email</Label>
-                <Input
-                  id="contact_email"
-                  type="email"
-                  value={formData.contact_email}
-                  onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="contact_phone">Contact Phone</Label>
-                <Input
-                  id="contact_phone"
-                  value={formData.contact_phone}
-                  onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                />
-              </div>
+
+              {/* User Account Section - Only for new organizations */}
+              {!editingOrg && (
+                <>
+                  <Separator />
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      NGO Login Account
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      Create login credentials for the NGO to access the system
+                    </p>
+                    <div className="space-y-2">
+                      <Label htmlFor="user_full_name">Account Holder Name *</Label>
+                      <Input
+                        id="user_full_name"
+                        value={formData.user_full_name}
+                        onChange={(e) => setFormData({ ...formData, user_full_name: e.target.value })}
+                        required
+                        placeholder="NGO representative name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="user_email">Login Email *</Label>
+                      <Input
+                        id="user_email"
+                        type="email"
+                        value={formData.user_email}
+                        onChange={(e) => setFormData({ ...formData, user_email: e.target.value })}
+                        required
+                        placeholder="user@ngo.org"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="user_password">Login Password *</Label>
+                      <Input
+                        id="user_password"
+                        type="password"
+                        value={formData.user_password}
+                        onChange={(e) => setFormData({ ...formData, user_password: e.target.value })}
+                        required
+                        minLength={6}
+                        placeholder="Minimum 6 characters"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Share these credentials with the NGO so they can sign in
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+
               <Button type="submit" className="w-full" disabled={isSaving}>
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingOrg ? 'Update' : 'Create'} Organization
+                {editingOrg ? 'Update Organization' : 'Register NGO & Create Account'}
               </Button>
             </form>
           </DialogContent>

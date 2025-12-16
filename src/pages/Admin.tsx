@@ -7,10 +7,11 @@ import { OrganizationsTab } from '@/components/admin/OrganizationsTab';
 import { UsersTab } from '@/components/admin/UsersTab';
 import { RulesTab } from '@/components/admin/RulesTab';
 import { WarningsTab } from '@/components/admin/WarningsTab';
-import { Building2, Users, Settings, AlertTriangle } from 'lucide-react';
+import { ReportsTab } from '@/components/admin/ReportsTab';
+import { Building2, Users, Settings, AlertTriangle, FileCheck } from 'lucide-react';
 
 export default function Admin() {
-  const [activeTab, setActiveTab] = useState('organizations');
+  const [activeTab, setActiveTab] = useState('reports');
 
   return (
     <>
@@ -23,11 +24,15 @@ export default function Admin() {
         <main className="container mx-auto px-4 py-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-foreground">Admin Panel</h1>
-            <p className="text-muted-foreground">Manage organizations, users, and system settings</p>
+            <p className="text-muted-foreground">Review reports, manage organizations, and system settings</p>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+              <TabsTrigger value="reports" className="flex items-center gap-2">
+                <FileCheck className="h-4 w-4" />
+                <span className="hidden sm:inline">Reports</span>
+              </TabsTrigger>
               <TabsTrigger value="organizations" className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
                 <span className="hidden sm:inline">Organizations</span>
@@ -47,6 +52,9 @@ export default function Admin() {
             </TabsList>
 
             <div className="mt-6">
+              <TabsContent value="reports">
+                <ReportsTab />
+              </TabsContent>
               <TabsContent value="organizations">
                 <OrganizationsTab />
               </TabsContent>

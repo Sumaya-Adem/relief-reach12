@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { Header } from '@/components/Header';
@@ -8,8 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
-import { MapPin, Calendar, Building2, Package, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { MapPin, Calendar, Building2, Package, Clock, CheckCircle, XCircle, AlertTriangle, ChevronRight } from 'lucide-react';
 import { AidTypeBadge } from '@/components/AidTypeBadge';
+import { NgoReportDetailDialog } from '@/components/NgoReportDetailDialog';
 import { cn } from '@/lib/utils';
 
 const statusConfig = {
@@ -37,6 +39,7 @@ const statusConfig = {
 
 export default function Reports() {
   const { profile, isAdmin } = useAuth();
+  const [selectedReport, setSelectedReport] = useState<any>(null);
 
   const { data: reports, isLoading } = useQuery({
     queryKey: ['aid-reports', isAdmin, profile?.organizationId],
@@ -78,7 +81,7 @@ export default function Reports() {
             <p className="text-muted-foreground text-sm mt-1">
               {isAdmin 
                 ? 'View all aid delivery reports from all organizations' 
-                : 'View aid deliveries submitted by your organization'}
+                : 'View aid deliveries submitted by your organization. Tap a report to see details.'}
             </p>
           </div>
 
@@ -109,7 +112,11 @@ export default function Reports() {
                 const StatusIcon = status?.icon || Clock;
                 
                 return (
-                  <Card key={report.id} className="overflow-hidden">
+                  <Card 
+                    key={report.id} 
+                    className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => setSelectedReport(report)}
+                  >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
@@ -152,42 +159,39 @@ export default function Reports() {
                           </div>
                         </div>
                         
-                        <div className="text-right">
-                          <p className="text-lg font-semibold text-foreground">
-                            {report.quantity} {report.unit}
-                          </p>
-                          {report.beneficiary_count && (
-                            <p className="text-xs text-muted-foreground">
-                              {report.beneficiary_count} beneficiaries
+                        <div className="flex items-center gap-2">
+                          <div className="text-right">
+                            <p className="text-lg font-semibold text-foreground">
+                              {report.quantity} {report.unit}
                             </p>
-                          )}
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Submitted: {format(new Date(report.created_at), 'MMM d, yyyy')}
-                          </p>
+                            {report.beneficiary_count && (
+                              <p className="text-xs text-muted-foreground">
+                                {report.beneficiary_count} beneficiaries
+                              </p>
+                            )}
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {format(new Date(report.created_at), 'MMM d, yyyy')}
+                            </p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
                         </div>
                       </div>
                       
-                      {/* Show rejection/flag reason for NGO users */}
+                      {/* Show rejection/flag reason preview */}
                       {report.status === 'rejected' && report.rejection_reason && (
-                        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-md">
-                          <p className="text-sm text-red-800">
-                            <strong>Rejection reason:</strong> {report.rejection_reason}
+                        <div className="mt-3 p-2 bg-red-50 border border-red-200 rounded-md">
+                          <p className="text-xs text-red-800 line-clamp-1">
+                            <strong>Rejected:</strong> {report.rejection_reason}
                           </p>
                         </div>
                       )}
                       
                       {report.status === 'flagged' && report.flag_reason && (
-                        <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-md">
-                          <p className="text-sm text-orange-800">
-                            <strong>Flag reason:</strong> {report.flag_reason}
+                        <div className="mt-3 p-2 bg-orange-50 border border-orange-200 rounded-md">
+                          <p className="text-xs text-orange-800 line-clamp-1">
+                            <strong>Flagged:</strong> {report.flag_reason}
                           </p>
                         </div>
-                      )}
-                      
-                      {report.notes && (
-                        <p className="mt-3 text-sm text-muted-foreground border-t pt-3">
-                          {report.notes}
-                        </p>
                       )}
                     </CardContent>
                   </Card>
@@ -198,6 +202,13 @@ export default function Reports() {
         </main>
         <BottomNavigation />
       </div>
+
+      {/* Report Detail Dialog */}
+      <NgoReportDetailDialog
+        report={selectedReport}
+        open={!!selectedReport}
+        onOpenChange={(open) => !open && setSelectedReport(null)}
+      />
     </>
   );
 }

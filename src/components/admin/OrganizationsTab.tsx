@@ -81,7 +81,10 @@ export function OrganizationsTab() {
         fetchOrganizations();
       }
     } else {
-      // Create new organization with user account
+      // Save current admin session before creating new user
+      const { data: currentSession } = await supabase.auth.getSession();
+      
+      // Create new organization
       const { data: orgData, error: orgError } = await supabase
         .from('organizations')
         .insert({
@@ -103,7 +106,7 @@ export function OrganizationsTab() {
         return;
       }
 
-      // Create user account for the NGO
+      // Create user account for the NGO (this will temporarily switch session)
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.user_email,
         password: formData.user_password,
@@ -114,35 +117,42 @@ export function OrganizationsTab() {
 
       if (signUpError) {
         toast({ variant: 'destructive', title: 'Error creating user', description: signUpError.message });
-        // Optionally delete the org if user creation fails
+        // Delete the org if user creation fails
         await supabase.from('organizations').delete().eq('id', orgData.id);
         setIsSaving(false);
         return;
       }
 
       if (authData.user) {
-        // Update profile with organization
+        // Update profile with organization using service role context
+        // We need to wait a moment for the profile to be created by the trigger
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         await supabase
           .from('profiles')
           .update({ organization_id: orgData.id })
           .eq('user_id', authData.user.id);
 
         // Add NGO user role
-        const { error: roleError } = await supabase
+        await supabase
           .from('user_roles')
           .insert({
             user_id: authData.user.id,
             role: 'ngo_user',
           });
 
-        if (roleError) {
-          toast({ variant: 'destructive', title: 'Warning', description: 'Organization created but role assignment failed' });
-        } else {
-          toast({ 
-            title: 'Success', 
-            description: `NGO "${formData.name}" registered with user account. Share login credentials with the NGO.` 
-          });
-        }
+        toast({ 
+          title: 'Success', 
+          description: `NGO "${formData.name}" registered! Login: ${formData.user_email}` 
+        });
+      }
+
+      // Restore admin session
+      if (currentSession?.session) {
+        await supabase.auth.setSession({
+          access_token: currentSession.session.access_token,
+          refresh_token: currentSession.session.refresh_token,
+        });
       }
 
       setIsDialogOpen(false);

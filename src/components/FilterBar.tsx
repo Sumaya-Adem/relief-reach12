@@ -28,9 +28,9 @@ export function FilterBar({ viewMode, onViewModeChange, filters, onFiltersChange
     <div className="bg-card rounded-lg border border-border p-3 shadow-sm">
       <div className="flex flex-col sm:flex-row gap-3">
         {/* View Toggle */}
-        <div className="flex rounded-lg border border-border overflow-hidden">
+        <div className="flex rounded-lg border border-secondary/30 overflow-hidden" style={{ backgroundColor: '#d5f2e3' }}>
           <Button
-            variant={viewMode === 'map' ? 'default' : 'ghost'}
+            variant={viewMode === 'map' ? 'secondary' : 'ghost'}
             size="sm"
             className="rounded-none flex-1 sm:flex-none"
             onClick={() => onViewModeChange('map')}
@@ -39,7 +39,7 @@ export function FilterBar({ viewMode, onViewModeChange, filters, onFiltersChange
             Map
           </Button>
           <Button
-            variant={viewMode === 'table' ? 'default' : 'ghost'}
+            variant={viewMode === 'table' ? 'secondary' : 'ghost'}
             size="sm"
             className="rounded-none flex-1 sm:flex-none"
             onClick={() => onViewModeChange('table')}

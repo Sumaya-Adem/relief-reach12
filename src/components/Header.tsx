@@ -1,14 +1,14 @@
-import { MapPin } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { NotificationsDropdown } from './NotificationsDropdown';
+import logo from '@/assets/logo.png';
 
 export function Header() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-50 bg-primary shadow-sm">
+    <header className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: '#d5f2e3' }}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           {/* Logo and Title */}
@@ -16,11 +16,9 @@ export function Header() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate('/')}
           >
-            <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-              <MapPin className="w-4 h-4 text-secondary-foreground" />
-            </div>
+            <img src={logo} alt="Badbaado Aid Track" className="w-10 h-10 object-contain" />
             <div>
-              <h1 className="text-base font-bold text-primary-foreground leading-tight">
+              <h1 className="text-base font-bold leading-tight" style={{ color: '#2E8B57' }}>
                 Badbaado Aid Track
               </h1>
             </div>
@@ -28,7 +26,7 @@ export function Header() {
 
           {/* Notification Bell */}
           {user && (
-            <div className="text-primary-foreground">
+            <div style={{ color: '#2E8B57' }}>
               <NotificationsDropdown />
             </div>
           )}

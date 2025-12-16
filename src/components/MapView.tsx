@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import { Area, AreaStatus } from '@/types/aid';
 import { cn } from '@/lib/utils';
 import { StatusBadge } from './StatusBadge';
@@ -28,67 +28,78 @@ const statusColors: Record<AreaStatus, string> = {
   'duplicate-warning': '#E9C46A',
 };
 
-// Component to handle map center changes
-function MapController({ selectedArea }: { selectedArea: Area | null }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (selectedArea) {
-      map.setView([selectedArea.latitude, selectedArea.longitude], 10, { animate: true });
-    }
-  }, [selectedArea, map]);
-  
-  return null;
-}
-
 export function MapView({ areas, selectedArea, onAreaSelect, filters }: MapViewProps) {
-  // Somalia center coordinates
-  const center: [number, number] = [5.15, 46.2];
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.CircleMarker[]>([]);
+
+  // Initialize map
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return;
+
+    // Somalia center coordinates
+    const center: L.LatLngExpression = [5.15, 46.2];
+
+    mapInstanceRef.current = L.map(mapRef.current).setView(center, 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(mapInstanceRef.current);
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Update markers when areas change
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Add new markers
+    areas.forEach((area) => {
+      const isSelected = selectedArea?.id === area.id;
+      
+      const marker = L.circleMarker([area.latitude, area.longitude], {
+        radius: isSelected ? 12 : 8,
+        fillColor: statusColors[area.status],
+        fillOpacity: 0.8,
+        color: isSelected ? '#1E3A5F' : '#fff',
+        weight: isSelected ? 3 : 2,
+      }).addTo(mapInstanceRef.current!);
+
+      marker.bindPopup(`
+        <div style="font-size: 14px;">
+          <p style="font-weight: 600; margin: 0;">${area.village}</p>
+          <p style="color: #666; margin: 0;">${area.district}, ${area.region}</p>
+        </div>
+      `);
+
+      marker.on('click', () => {
+        onAreaSelect(isSelected ? null : area);
+      });
+
+      markersRef.current.push(marker);
+    });
+  }, [areas, selectedArea, onAreaSelect]);
+
+  // Pan to selected area
+  useEffect(() => {
+    if (selectedArea && mapInstanceRef.current) {
+      mapInstanceRef.current.setView([selectedArea.latitude, selectedArea.longitude], 10, { animate: true });
+    }
+  }, [selectedArea]);
 
   return (
     <div className="relative h-full w-full rounded-lg overflow-hidden">
       {/* Leaflet Map Container */}
-      <MapContainer
-        center={center}
-        zoom={6}
-        className="h-full w-full z-0"
-        scrollWheelZoom={true}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <MapController selectedArea={selectedArea} />
-        
-        {/* Area Markers */}
-        {areas.map((area) => {
-          const isSelected = selectedArea?.id === area.id;
-          
-          return (
-            <CircleMarker
-              key={area.id}
-              center={[area.latitude, area.longitude]}
-              radius={isSelected ? 12 : 8}
-              pathOptions={{
-                fillColor: statusColors[area.status],
-                fillOpacity: 0.8,
-                color: isSelected ? '#1E3A5F' : '#fff',
-                weight: isSelected ? 3 : 2,
-              }}
-              eventHandlers={{
-                click: () => onAreaSelect(isSelected ? null : area),
-              }}
-            >
-              <Popup>
-                <div className="text-sm">
-                  <p className="font-semibold">{area.village}</p>
-                  <p className="text-muted-foreground">{area.district}, {area.region}</p>
-                </div>
-              </Popup>
-            </CircleMarker>
-          );
-        })}
-      </MapContainer>
+      <div ref={mapRef} className="h-full w-full z-0" />
 
       {/* Map Legend */}
       <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 shadow-lg z-[1000]">

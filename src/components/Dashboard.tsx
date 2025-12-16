@@ -24,6 +24,7 @@ export function Dashboard() {
     aidType: 'all',
     organization: 'all',
     timePeriod: '30',
+    status: 'all',
   });
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
 
@@ -96,10 +97,21 @@ export function Dashboard() {
         const hasOrg = area.aidRecords.some(r => r.organizationId === filters.organization);
         if (!hasOrg) return false;
       }
+
+      if (filters.status !== 'all') {
+        if (area.status !== filters.status) return false;
+      }
       
       return true;
     });
   }, [filters]);
+
+  const handleStatClick = (status: string) => {
+    setFilters(prev => ({
+      ...prev,
+      status: prev.status === status ? 'all' : status
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,6 +124,7 @@ export function Dashboard() {
             subtitle="Urgent attention needed"
             icon={Circle}
             variant="unaided"
+            onClick={() => handleStatClick('not-aided')}
           />
           <StatCard
             title="Partially Aided"
@@ -119,6 +132,7 @@ export function Dashboard() {
             subtitle="Missing some aid types"
             icon={AlertCircle}
             variant="partial"
+            onClick={() => handleStatClick('partially-aided')}
           />
           <StatCard
             title="Fully Aided"
@@ -126,6 +140,7 @@ export function Dashboard() {
             subtitle="All aid types covered"
             icon={CheckCircle}
             variant="aided"
+            onClick={() => handleStatClick('fully-aided')}
           />
           <StatCard
             title="Duplicate Alerts"
@@ -133,6 +148,7 @@ export function Dashboard() {
             subtitle="Requires review"
             icon={AlertTriangle}
             variant="duplicate"
+            onClick={() => handleStatClick('duplicate-warning')}
           />
         </div>
 

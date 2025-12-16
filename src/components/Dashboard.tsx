@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { areas } from '@/data/mockData';
 import { Area } from '@/types/aid';
 import { StatCard } from './StatCard';
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'map' | 'table'>('map');
   const [selectedArea, setSelectedArea] = useState<Area | null>(null);
   const [filters, setFilters] = useState({
@@ -107,10 +109,7 @@ export function Dashboard() {
   }, [filters]);
 
   const handleStatClick = (status: string) => {
-    setFilters(prev => ({
-      ...prev,
-      status: prev.status === status ? 'all' : status
-    }));
+    navigate(`/areas/${status}`);
   };
 
   return (

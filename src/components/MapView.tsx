@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import { Area, AreaStatus } from '@/types/aid';
 import { cn } from '@/lib/utils';
 import { StatusBadge } from './StatusBadge';
@@ -7,6 +8,7 @@ import { X, MapPin, Users, Calendar } from 'lucide-react';
 import { Button } from './ui/button';
 import { format, parseISO } from 'date-fns';
 import { getMissingAidTypes } from '@/lib/aidEngine';
+import 'leaflet/dist/leaflet.css';
 
 interface MapViewProps {
   areas: Area[];
@@ -26,105 +28,70 @@ const statusColors: Record<AreaStatus, string> = {
   'duplicate-warning': '#E9C46A',
 };
 
-export function MapView({ areas, selectedArea, onAreaSelect, filters }: MapViewProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
+// Component to handle map center changes
+function MapController({ selectedArea }: { selectedArea: Area | null }) {
+  const map = useMap();
+  
   useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight,
-        });
-      }
-    };
+    if (selectedArea) {
+      map.setView([selectedArea.latitude, selectedArea.longitude], 10, { animate: true });
+    }
+  }, [selectedArea, map]);
+  
+  return null;
+}
 
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
-  }, []);
-
-  // Calculate bounds for Somalia region
-  const bounds = {
-    minLat: 1.5,
-    maxLat: 9,
-    minLng: 41,
-    maxLng: 49,
-  };
-
-  const projectPoint = (lat: number, lng: number) => {
-    const x = ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * dimensions.width;
-    const y = ((bounds.maxLat - lat) / (bounds.maxLat - bounds.minLat)) * dimensions.height;
-    return { x, y };
-  };
+export function MapView({ areas, selectedArea, onAreaSelect, filters }: MapViewProps) {
+  // Somalia center coordinates
+  const center: [number, number] = [5.15, 46.2];
 
   return (
-    <div className="relative h-full w-full bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg overflow-hidden">
-      {/* Map Container */}
-      <div 
-        ref={containerRef} 
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.05) 0%, transparent 50%),
-            radial-gradient(circle at 75% 75%, hsl(var(--secondary) / 0.05) 0%, transparent 50%)
-          `,
-        }}
+    <div className="relative h-full w-full rounded-lg overflow-hidden">
+      {/* Leaflet Map Container */}
+      <MapContainer
+        center={center}
+        zoom={6}
+        className="h-full w-full z-0"
+        scrollWheelZoom={true}
       >
-        {/* Grid lines for visual reference */}
-        <svg className="absolute inset-0 w-full h-full opacity-20">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <MapController selectedArea={selectedArea} />
+        
         {/* Area Markers */}
-        {dimensions.width > 0 && areas.map((area) => {
-          const point = projectPoint(area.latitude, area.longitude);
+        {areas.map((area) => {
           const isSelected = selectedArea?.id === area.id;
           
           return (
-            <button
+            <CircleMarker
               key={area.id}
-              className={cn(
-                'absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-200',
-                'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-full',
-                isSelected && 'scale-125 z-10'
-              )}
-              style={{ left: point.x, top: point.y }}
-              onClick={() => onAreaSelect(isSelected ? null : area)}
+              center={[area.latitude, area.longitude]}
+              radius={isSelected ? 12 : 8}
+              pathOptions={{
+                fillColor: statusColors[area.status],
+                fillOpacity: 0.8,
+                color: isSelected ? '#1E3A5F' : '#fff',
+                weight: isSelected ? 3 : 2,
+              }}
+              eventHandlers={{
+                click: () => onAreaSelect(isSelected ? null : area),
+              }}
             >
-              <div
-                className={cn(
-                  'w-6 h-6 rounded-full border-2 border-card shadow-lg',
-                  'flex items-center justify-center',
-                  isSelected && 'ring-4 ring-ring/30'
-                )}
-                style={{ backgroundColor: statusColors[area.status] }}
-              >
-                {area.status === 'duplicate-warning' && (
-                  <span className="text-xs">!</span>
-                )}
-              </div>
-              <div className={cn(
-                'absolute -bottom-6 left-1/2 transform -translate-x-1/2',
-                'text-xs font-medium text-foreground whitespace-nowrap',
-                'bg-card/90 backdrop-blur-sm px-1.5 py-0.5 rounded shadow-sm',
-                !isSelected && 'hidden'
-              )}>
-                {area.village}
-              </div>
-            </button>
+              <Popup>
+                <div className="text-sm">
+                  <p className="font-semibold">{area.village}</p>
+                  <p className="text-muted-foreground">{area.district}, {area.region}</p>
+                </div>
+              </Popup>
+            </CircleMarker>
           );
         })}
-      </div>
+      </MapContainer>
 
       {/* Map Legend */}
-      <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+      <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 shadow-lg z-[1000]">
         <p className="text-xs font-medium text-muted-foreground mb-2">Legend</p>
         <div className="space-y-1.5">
           {Object.entries(statusColors).map(([status, color]) => (
@@ -143,7 +110,7 @@ export function MapView({ areas, selectedArea, onAreaSelect, filters }: MapViewP
 
       {/* Selected Area Panel */}
       {selectedArea && (
-        <div className="absolute top-4 right-4 w-80 max-w-[calc(100%-2rem)] bg-card rounded-lg shadow-xl animate-slide-in-right overflow-hidden">
+        <div className="absolute top-4 right-4 w-80 max-w-[calc(100%-2rem)] bg-card rounded-lg shadow-xl animate-slide-in-right overflow-hidden z-[1000]">
           <div className="p-4 border-b border-border">
             <div className="flex items-start justify-between">
               <div>

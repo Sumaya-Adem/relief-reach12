@@ -137,6 +137,9 @@ export default function Auth() {
             <p className="text-[#1E3A5F] text-center mt-2 font-medium">
               Humanitarian Aid Coordination System
             </p>
+            <p className="text-[#2E8B57] text-center mt-1 italic text-sm">
+              Right aid, right place, right time
+            </p>
           </div>
 
           <Card className="shadow-xl border-0 animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'backwards' }}>

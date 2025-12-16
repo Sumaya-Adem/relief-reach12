@@ -186,13 +186,10 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
             .upload(filePath, file);
 
           if (!uploadError) {
-            const { data: urlData } = supabase.storage
-              .from('report-evidence')
-              .getPublicUrl(filePath);
-
+            // Store the storage path - signed URLs will be generated when viewing
             await supabase.from('report_evidence').insert({
               aid_record_id: data.id,
-              file_url: urlData.publicUrl,
+              file_url: filePath,
               file_name: file.name,
               file_type: file.type,
               uploaded_by: user.id,

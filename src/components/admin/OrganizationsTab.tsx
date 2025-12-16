@@ -212,185 +212,187 @@ export function OrganizationsTab() {
   }
 
   return (
-    <Card className="admin-card-green border-2">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          <Building2 className="h-5 w-5" />
-          NGO Organizations ({organizations.length})
-        </CardTitle>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openCreateDialog} className="bg-secondary hover:bg-secondary/90">
-              <Plus className="h-4 w-4 mr-2" />
-              Add NGO
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>{editingOrg ? 'Edit NGO' : 'Register New NGO'}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Organization Details */}
-              <div className="space-y-3">
-                <h4 className="font-medium text-sm flex items-center gap-2">
-                  <Building2 className="h-4 w-4" />
-                  Organization Details
-                </h4>
+    <>
+      <Card className="admin-card-green border-2">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5" />
+            NGO Organizations ({organizations.length})
+          </CardTitle>
+          <Button onClick={openCreateDialog} className="bg-secondary hover:bg-secondary/90">
+            <Plus className="h-4 w-4 mr-2" />
+            Add NGO
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {organizations.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">
+              No organizations yet. Create one to get started.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {organizations.map((org) => (
+                  <TableRow key={org.id}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{org.name}</p>
+                        {org.description && (
+                          <p className="text-sm text-muted-foreground">{org.description}</p>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {org.contact_email && <p>{org.contact_email}</p>}
+                        {org.contact_phone && <p className="text-muted-foreground">{org.contact_phone}</p>}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={org.is_active 
+                          ? 'bg-pastel-green text-green-800 border-0 cursor-pointer' 
+                          : 'bg-muted text-muted-foreground cursor-pointer'}
+                        onClick={() => toggleActive(org)}
+                      >
+                        {org.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" onClick={() => openEditDialog(org)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Dialog moved outside of Card for proper rendering */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingOrg ? 'Edit NGO' : 'Register New NGO'}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Organization Details */}
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                Organization Details
+              </h4>
+              <div className="space-y-2">
+                <Label htmlFor="name">Organization Name *</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  placeholder="e.g. Red Cross Somalia"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Brief description of the NGO"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Organization Name *</Label>
+                  <Label htmlFor="contact_email">Contact Email</Label>
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    placeholder="e.g. Red Cross Somalia"
+                    id="contact_email"
+                    type="email"
+                    value={formData.contact_email}
+                    onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                    placeholder="org@email.com"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="contact_phone">Contact Phone</Label>
                   <Input
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Brief description of the NGO"
+                    id="contact_phone"
+                    value={formData.contact_phone}
+                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                    placeholder="+252..."
                   />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="contact_email">Contact Email</Label>
-                    <Input
-                      id="contact_email"
-                      type="email"
-                      value={formData.contact_email}
-                      onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-                      placeholder="org@email.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="contact_phone">Contact Phone</Label>
-                    <Input
-                      id="contact_phone"
-                      value={formData.contact_phone}
-                      onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                      placeholder="+252..."
-                    />
-                  </div>
                 </div>
               </div>
+            </div>
 
-              {/* User Account Section - Only for new organizations */}
-              {!editingOrg && (
-                <>
-                  <Separator />
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-sm flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      NGO Login Account
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      Create login credentials for the NGO to access the system
-                    </p>
-                    <div className="space-y-2">
-                      <Label htmlFor="user_full_name">Account Holder Name *</Label>
-                      <Input
-                        id="user_full_name"
-                        value={formData.user_full_name}
-                        onChange={(e) => setFormData({ ...formData, user_full_name: e.target.value })}
-                        required
-                        placeholder="NGO representative name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="user_email">Login Email *</Label>
-                      <Input
-                        id="user_email"
-                        type="email"
-                        value={formData.user_email}
-                        onChange={(e) => setFormData({ ...formData, user_email: e.target.value })}
-                        required
-                        placeholder="user@ngo.org"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="user_password">Login Password *</Label>
-                      <Input
-                        id="user_password"
-                        type="password"
-                        value={formData.user_password}
-                        onChange={(e) => setFormData({ ...formData, user_password: e.target.value })}
-                        required
-                        minLength={6}
-                        placeholder="Minimum 6 characters"
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Share these credentials with the NGO so they can sign in
-                      </p>
-                    </div>
+            {/* User Account Section - Only for new organizations */}
+            {!editingOrg && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    NGO Login Account
+                  </h4>
+                  <p className="text-xs text-muted-foreground">
+                    Create login credentials for the NGO to access the system
+                  </p>
+                  <div className="space-y-2">
+                    <Label htmlFor="user_full_name">Account Holder Name *</Label>
+                    <Input
+                      id="user_full_name"
+                      value={formData.user_full_name}
+                      onChange={(e) => setFormData({ ...formData, user_full_name: e.target.value })}
+                      required
+                      placeholder="NGO representative name"
+                    />
                   </div>
-                </>
-              )}
+                  <div className="space-y-2">
+                    <Label htmlFor="user_email">Login Email *</Label>
+                    <Input
+                      id="user_email"
+                      type="email"
+                      value={formData.user_email}
+                      onChange={(e) => setFormData({ ...formData, user_email: e.target.value })}
+                      required
+                      placeholder="user@ngo.org"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="user_password">Login Password *</Label>
+                    <Input
+                      id="user_password"
+                      type="password"
+                      value={formData.user_password}
+                      onChange={(e) => setFormData({ ...formData, user_password: e.target.value })}
+                      required
+                      minLength={6}
+                      placeholder="Minimum 6 characters"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Share these credentials with the NGO so they can sign in
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
 
-              <Button type="submit" className="w-full" disabled={isSaving}>
-                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingOrg ? 'Update Organization' : 'Register NGO & Create Account'}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </CardHeader>
-      <CardContent>
-        {organizations.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">
-            No organizations yet. Create one to get started.
-          </p>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {organizations.map((org) => (
-                <TableRow key={org.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{org.name}</p>
-                      {org.description && (
-                        <p className="text-sm text-muted-foreground">{org.description}</p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {org.contact_email && <p>{org.contact_email}</p>}
-                      {org.contact_phone && <p className="text-muted-foreground">{org.contact_phone}</p>}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      className={org.is_active 
-                        ? 'bg-pastel-green text-green-800 border-0 cursor-pointer' 
-                        : 'bg-muted text-muted-foreground cursor-pointer'}
-                      onClick={() => toggleActive(org)}
-                    >
-                      {org.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => openEditDialog(org)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-    </Card>
+            <Button type="submit" className="w-full" disabled={isSaving}>
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {editingOrg ? 'Update Organization' : 'Register NGO & Create Account'}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

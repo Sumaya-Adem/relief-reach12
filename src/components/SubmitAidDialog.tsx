@@ -471,16 +471,15 @@ export function SubmitAidDialog({ open, onOpenChange, preselectedArea }: SubmitA
             <Button
               type="button"
               variant="outline"
-              className="flex-1"
+              className="flex-1 bg-[#d5f2e3] border-[#d5f2e3] hover:bg-[#c5e8d8] text-foreground"
               onClick={() => onOpenChange(false)}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1"
+              className="flex-1 bg-[#2E8B57] hover:bg-[#2E8B57]/90 text-white"
               disabled={submitMutation.isPending || !selectedAreaId || !selectedAidType || !quantity || !unit}
-              variant={duplicateWarning ? 'warning' : 'default'}
             >
               {submitMutation.isPending ? 'Submitting...' : duplicateWarning ? 'Submit Anyway' : 'Submit Report'}
             </Button>

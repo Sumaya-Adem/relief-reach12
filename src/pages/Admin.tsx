@@ -6,9 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { OrganizationsTab } from '@/components/admin/OrganizationsTab';
 import { UsersTab } from '@/components/admin/UsersTab';
 import { RulesTab } from '@/components/admin/RulesTab';
-import { WarningsTab } from '@/components/admin/WarningsTab';
 import { ReportsTab } from '@/components/admin/ReportsTab';
-import { Building2, Users, Settings, AlertTriangle, FileCheck } from 'lucide-react';
+import { Building2, Users, Settings, FileCheck } from 'lucide-react';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('reports');
@@ -28,7 +27,7 @@ export default function Admin() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
               <TabsTrigger value="reports" className="flex items-center gap-2">
                 <FileCheck className="h-4 w-4" />
                 <span className="hidden sm:inline">Reports</span>
@@ -45,10 +44,6 @@ export default function Admin() {
                 <Settings className="h-4 w-4" />
                 <span className="hidden sm:inline">Rules</span>
               </TabsTrigger>
-              <TabsTrigger value="warnings" className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                <span className="hidden sm:inline">Warnings</span>
-              </TabsTrigger>
             </TabsList>
 
             <div className="mt-6">
@@ -63,9 +58,6 @@ export default function Admin() {
               </TabsContent>
               <TabsContent value="rules">
                 <RulesTab />
-              </TabsContent>
-              <TabsContent value="warnings">
-                <WarningsTab />
               </TabsContent>
             </div>
           </Tabs>

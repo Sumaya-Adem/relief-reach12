@@ -7,6 +7,7 @@ import { MapView } from './MapView';
 import { TableView } from './TableView';
 import { SubmitAidDialog } from './SubmitAidDialog';
 import { Button } from './ui/button';
+import { toast } from 'sonner';
 import { 
   AlertCircle, 
   CheckCircle, 
@@ -25,6 +26,40 @@ export function Dashboard() {
     timePeriod: '30',
   });
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
+
+  // Export data as CSV
+  const handleExportData = () => {
+    const headers = ['Area ID', 'Village', 'District', 'Region', 'Country', 'Status', 'Population', 'Latitude', 'Longitude'];
+    
+    const csvRows = [
+      headers.join(','),
+      ...filteredAreas.map(area => [
+        area.id,
+        `"${area.village}"`,
+        `"${area.district}"`,
+        `"${area.region}"`,
+        `"${area.country}"`,
+        area.status,
+        area.population || '',
+        area.latitude || '',
+        area.longitude || ''
+      ].join(','))
+    ];
+    
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `aid-data-export-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success('Data exported successfully');
+  };
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -110,7 +145,7 @@ export function Dashboard() {
             <Plus className="w-4 h-4 mr-1.5" />
             Submit Aid Report
           </Button>
-          <Button variant="outline" className="flex-1 sm:flex-none">
+          <Button variant="outline" className="flex-1 sm:flex-none" onClick={handleExportData}>
             <Download className="w-4 h-4 mr-1.5" />
             Export Data
           </Button>

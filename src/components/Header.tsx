@@ -1,10 +1,10 @@
-import { MapPin, Bell } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MapPin } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { NotificationsDropdown } from './NotificationsDropdown';
 
 export function Header() {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -28,14 +28,9 @@ export function Header() {
 
           {/* Notification Bell */}
           {user && (
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="text-primary-foreground hover:bg-primary-foreground/10 relative"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-status-unaided rounded-full" />
-            </Button>
+            <div className="text-primary-foreground">
+              <NotificationsDropdown />
+            </div>
           )}
         </div>
       </div>

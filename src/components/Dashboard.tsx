@@ -140,7 +140,7 @@ export function Dashboard() {
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <Button 
             onClick={() => setIsSubmitDialogOpen(true)}
-            className="flex-1 sm:flex-none"
+            className="flex-1 sm:flex-none bg-secondary hover:bg-secondary/90"
           >
             <Plus className="w-4 h-4 mr-1.5" />
             Submit Aid Report

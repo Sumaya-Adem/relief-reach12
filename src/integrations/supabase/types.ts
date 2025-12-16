@@ -137,13 +137,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "aid_records_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       aid_restriction_rules: {
@@ -385,13 +378,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "profiles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       report_evidence: {
@@ -455,33 +441,7 @@ export type Database = {
       }
     }
     Views: {
-      organizations_public: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string | null
-          is_active: boolean | null
-          name: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          is_active?: boolean | null
-          name?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          is_active?: boolean | null
-          name?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_user_organization_id: { Args: { _user_id: string }; Returns: string }

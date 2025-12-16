@@ -130,7 +130,7 @@ export default function Auth() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-48 h-48 rounded-2xl flex items-center justify-center mb-1 overflow-hidden">
+            <div className="w-48 h-48 rounded-2xl flex items-center justify-center -mb-2 overflow-hidden">
               <img src={logo} alt="Badbaado Aid Track Logo" className="w-[140%] h-[140%] object-cover" />
             </div>
             <h1 className="text-3xl font-bold text-[#2E8B57]">Badbaado Aid Track</h1>

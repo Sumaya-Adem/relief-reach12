@@ -21,9 +21,6 @@ export function Header() {
               <h1 className="text-base font-bold leading-tight" style={{ color: '#2E8B57' }}>
                 Badbaado Aid Track
               </h1>
-              <p className="text-xs italic" style={{ color: '#2E8B57' }}>
-                Right aid, right place, right time
-              </p>
             </div>
           </div>
 

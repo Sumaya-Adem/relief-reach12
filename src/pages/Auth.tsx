@@ -129,7 +129,7 @@ export default function Auth() {
       <div className="min-h-screen bg-[#d5f2e3] flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex flex-col items-center mb-8 animate-fade-in">
             <div className="w-48 h-48 rounded-2xl flex items-center justify-center -mb-6 overflow-hidden">
               <img src={logo} alt="Badbaado Aid Track Logo" className="w-[140%] h-[140%] object-cover" />
             </div>
@@ -139,7 +139,7 @@ export default function Auth() {
             </p>
           </div>
 
-          <Card className="shadow-xl border-0">
+          <Card className="shadow-xl border-0 animate-fade-in" style={{ animationDelay: '0.15s', animationFillMode: 'backwards' }}>
             <CardHeader>
               <CardTitle className="text-[#1E3A5F]">Welcome</CardTitle>
               <CardDescription>

@@ -13,7 +13,7 @@ export function Header() {
         <div className="flex items-center justify-between h-14">
           {/* Logo and Title */}
           <div 
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-1 cursor-pointer"
             onClick={() => navigate('/')}
           >
             <img src={logo} alt="Badbaado Aid Track" className="w-14 h-14 object-contain" />

@@ -36,7 +36,7 @@ export function NotificationsDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
-          <Bell className="w-5 h-5" />
+          <Bell className="w-5 h-5" fill="currentColor" />
           {unreadCount > 0 && (
             <Badge 
               variant="destructive" 

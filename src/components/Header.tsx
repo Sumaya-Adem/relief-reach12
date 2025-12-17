@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { NotificationsDropdown } from './NotificationsDropdown';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/logo-new.png';
 
 export function Header() {
   const { user } = useAuth();

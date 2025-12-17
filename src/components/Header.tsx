@@ -16,12 +16,10 @@ export function Header() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate('/')}
           >
-            <img src={logo} alt="Badbaado Aid Track" className="w-10 h-10 object-contain" />
-            <div>
-              <h1 className="text-base font-bold leading-tight" style={{ color: '#2E8B57' }}>
-                Badbaado Aid Track
-              </h1>
-            </div>
+            <img src={logo} alt="Badbaado Aid Track" className="w-14 h-14 object-contain" />
+            <h1 className="text-lg font-bold leading-tight" style={{ color: '#2E8B57' }}>
+              Badbaado Aid Track
+            </h1>
           </div>
 
           {/* Notification Bell */}

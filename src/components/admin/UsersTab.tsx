@@ -258,7 +258,7 @@ export function UsersTab() {
       return <Badge className="bg-[hsl(var(--pastel-purple))] text-purple-800 border-0">Government Admin</Badge>;
     }
     if (user.role === 'ngo_user') {
-      return <Badge className="bg-[hsl(var(--pastel-green))] text-green-800 border-0">NGO User</Badge>;
+      return <Badge className="bg-[hsl(var(--pastel-blue))] text-blue-800 border-0">NGO User</Badge>;
     }
     return <Badge variant="outline">No Role</Badge>;
   };
@@ -299,7 +299,7 @@ export function UsersTab() {
                   value={formData.role}
                   onValueChange={(value) => setFormData({ ...formData, role: value as 'admin' | 'ngo_user', organization_id: value === 'admin' ? '' : formData.organization_id })}
                 >
-                  <SelectTrigger className={isNgoUser ? 'bg-[hsl(var(--pastel-green)/0.3)]' : 'bg-[hsl(var(--pastel-purple)/0.3)]'}>
+                  <SelectTrigger className={isNgoUser ? 'bg-[hsl(var(--pastel-blue)/0.3)]' : 'bg-[hsl(var(--pastel-purple)/0.3)]'}>
                     <SelectValue placeholder="Select user type" />
                   </SelectTrigger>
                   <SelectContent>

@@ -29,7 +29,7 @@ export function FilterBar({ viewMode, onViewModeChange, filters, onFiltersChange
     <div className="bg-card rounded-lg border border-border p-3 shadow-sm">
       <div className="flex flex-col sm:flex-row gap-3">
         {/* View Toggle */}
-        <div className="flex rounded-lg border border-secondary/30 overflow-hidden" style={{ backgroundColor: '#d5f2e3' }}>
+        <div className="flex rounded-lg border border-secondary/30 overflow-hidden" style={{ backgroundColor: '#dbeafe' }}>
           <Button
             variant={viewMode === 'map' ? 'secondary' : 'ghost'}
             size="sm"

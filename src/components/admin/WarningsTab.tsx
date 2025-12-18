@@ -217,7 +217,7 @@ export function WarningsTab() {
                   </TableCell>
                   <TableCell>
                     {warning.acknowledged ? (
-                      <Badge className="bg-pastel-green text-green-800 border-0">
+                      <Badge className="bg-pastel-blue text-blue-800 border-0">
                         <Check className="h-3 w-3 mr-1" />
                         Acknowledged
                       </Badge>

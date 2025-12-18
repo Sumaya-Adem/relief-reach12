@@ -114,8 +114,8 @@ export default function Auth() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#d5f2e3] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#2E8B57]" />
+      <div className="min-h-screen bg-[#dbeafe] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#2563EB]" />
       </div>
     );
   }
@@ -126,15 +126,15 @@ export default function Auth() {
         <title>Sign In | Badbaado Aid Track</title>
         <meta name="description" content="Sign in to Badbaado Aid Track to coordinate humanitarian aid distribution." />
       </Helmet>
-      <div className="min-h-screen bg-[#d5f2e3] flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-[#dbeafe] flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8 animate-fade-in">
             <div className="w-48 h-48 rounded-2xl flex items-center justify-center -mb-6 overflow-hidden">
               <img src={logo} alt="Badbaado Aid Track Logo" className="w-[140%] h-[140%] object-cover" />
             </div>
-            <h1 className="text-3xl font-bold text-[#2E8B57]">Badbaado Aid Track</h1>
-            <p className="text-[#2E8B57] text-center mt-2 italic text-sm">
+            <h1 className="text-3xl font-bold text-[#2563EB]">Badbaado Aid Track</h1>
+            <p className="text-[#2563EB] text-center mt-2 italic text-sm">
               Right aid, right place, right time
             </p>
           </div>
@@ -148,9 +148,9 @@ export default function Auth() {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="signin" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-[#d5f2e3]">
-                  <TabsTrigger value="signin" className="data-[state=active]:bg-[#2E8B57] data-[state=active]:text-white">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup" className="data-[state=active]:bg-[#2E8B57] data-[state=active]:text-white">Sign Up</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 bg-[#dbeafe]">
+                  <TabsTrigger value="signin" className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">Sign In</TabsTrigger>
+                  <TabsTrigger value="signup" className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white">Sign Up</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="signin">
@@ -182,7 +182,7 @@ export default function Auth() {
                         <p className="text-sm text-destructive">{errors.password}</p>
                       )}
                     </div>
-                    <Button type="submit" className="w-full bg-[#2E8B57] hover:bg-[#2E8B57]/90 text-white" disabled={isLoading}>
+                    <Button type="submit" className="w-full bg-[#2563EB] hover:bg-[#2563EB]/90 text-white" disabled={isLoading}>
                       {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Sign In
                     </Button>
@@ -233,7 +233,7 @@ export default function Auth() {
                         <p className="text-sm text-destructive">{errors.password}</p>
                       )}
                     </div>
-                    <Button type="submit" className="w-full bg-[#2E8B57] hover:bg-[#2E8B57]/90 text-white" disabled={isLoading}>
+                    <Button type="submit" className="w-full bg-[#2563EB] hover:bg-[#2563EB]/90 text-white" disabled={isLoading}>
                       {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Create Account
                     </Button>

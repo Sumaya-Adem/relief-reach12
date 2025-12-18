@@ -20,8 +20,8 @@
     --primary: 210 52% 24%;
     --primary-foreground: 0 0% 100%;
 
-    /* Soft Green - Aid & Recovery */
-    --secondary: 146 50% 36%;
+    /* Blue - Aid & Recovery */
+    --secondary: 210 60% 45%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 25% 94%;
@@ -37,12 +37,12 @@
     /* Status Colors - Pastel variants */
     --status-unaided: 355 65% 58%;
     --status-partial: 40 90% 60%;
-    --status-aided: 146 55% 42%;
+    --status-aided: 210 60% 45%;
     --status-duplicate: 28 85% 58%;
 
     /* Admin Panel Pastel Colors */
     --pastel-blue: 210 60% 85%;
-    --pastel-green: 146 50% 85%;
+    --pastel-green: 210 60% 85%;
     --pastel-yellow: 45 90% 85%;
     --pastel-pink: 340 60% 88%;
     --pastel-purple: 270 50% 88%;
@@ -83,7 +83,7 @@
     --primary: 210 40% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 146 40% 40%;
+    --secondary: 210 50% 50%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 30% 20%;

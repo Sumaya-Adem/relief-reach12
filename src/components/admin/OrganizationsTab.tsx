@@ -259,7 +259,7 @@ export function OrganizationsTab() {
                     <TableCell>
                       <Badge
                         className={org.is_active 
-                          ? 'bg-pastel-green text-green-800 border-0 cursor-pointer' 
+                          ? 'bg-pastel-blue text-blue-800 border-0 cursor-pointer' 
                           : 'bg-muted text-muted-foreground cursor-pointer'}
                         onClick={() => toggleActive(org)}
                       >

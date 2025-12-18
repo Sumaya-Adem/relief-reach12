@@ -8,7 +8,7 @@ export function Header() {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: '#d5f2e3' }}>
+    <header className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: '#dbeafe' }}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14">
           {/* Logo and Title */}
@@ -17,14 +17,14 @@ export function Header() {
             onClick={() => navigate('/')}
           >
             <img src={logo} alt="Badbaado Aid Track" className="w-14 h-14 object-contain" />
-            <h1 className="text-lg font-bold leading-tight" style={{ color: '#2E8B57' }}>
+            <h1 className="text-lg font-bold leading-tight" style={{ color: '#2563EB' }}>
               Badbaado Aid Track
             </h1>
           </div>
 
           {/* Notification Bell */}
           {user && (
-            <div style={{ color: '#2E8B57' }}>
+            <div style={{ color: '#2563EB' }}>
               <NotificationsDropdown />
             </div>
           )}

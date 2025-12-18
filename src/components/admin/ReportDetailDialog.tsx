@@ -59,9 +59,9 @@ interface ReportDetailDialogProps {
 
 const statusColors: Record<ReportStatus | 'duplicate', string> = {
   pending: 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
-  approved: 'bg-green-500/20 text-green-700 border-green-500/30',
+  approved: 'bg-blue-500/20 text-blue-700 border-blue-500/30',
   rejected: 'bg-red-500/20 text-red-700 border-red-500/30',
-  flagged: 'bg-blue-500/20 text-blue-700 border-blue-500/30',
+  flagged: 'bg-purple-500/20 text-purple-700 border-purple-500/30',
   duplicate: 'bg-orange-500/20 text-orange-700 border-orange-500/30',
 };
 
@@ -462,7 +462,7 @@ Generated on: ${format(new Date(), 'MMMM d, yyyy HH:mm')}
                 {/* Action Buttons */}
                 {!showRejectForm && !showFlagForm && (
                   <div className="flex flex-wrap gap-2">
-                    <Button onClick={handleApprove} disabled={isSubmitting} className="bg-green-600 hover:bg-green-700">
+                    <Button onClick={handleApprove} disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700">
                       <Check className="h-4 w-4 mr-2" />
                       Approve
                     </Button>

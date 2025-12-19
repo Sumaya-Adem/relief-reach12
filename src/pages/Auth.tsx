@@ -131,7 +131,12 @@ export default function Auth() {
           {/* Logo */}
           <div className="flex flex-col items-center mb-8 animate-fade-in">
             <div className="w-48 h-48 rounded-2xl flex items-center justify-center -mb-6 overflow-hidden">
-              <img src={logo} alt="Badbaado Aid Track Logo" className="w-[140%] h-[140%] object-cover" />
+              <img 
+                src={logo} 
+                alt="Badbaado Aid Track Logo" 
+                className="w-[140%] h-[140%] object-cover"
+                style={{ filter: 'sepia(100%) saturate(300%) hue-rotate(180deg) brightness(0.9)' }}
+              />
             </div>
             <h1 className="text-3xl font-bold text-[#2563EB]">Badbaado Aid Track</h1>
             <p className="text-[#2563EB] text-center mt-2 italic text-sm">

@@ -24,7 +24,7 @@ interface MapViewProps {
 const statusColors: Record<AreaStatus, string> = {
   'not-aided': '#E63946',
   'partially-aided': '#F4A261',
-  'fully-aided': '#2563EB',
+  'fully-aided': '#22C55E',
   'duplicate-warning': '#E9C46A',
 };
 

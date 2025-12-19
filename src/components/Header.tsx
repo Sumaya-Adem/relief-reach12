@@ -1,7 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { NotificationsDropdown } from './NotificationsDropdown';
-import logo from '@/assets/logo-new.png';
 
 export function Header() {
   const { user } = useAuth();
@@ -11,12 +10,11 @@ export function Header() {
     <header className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: '#dbeafe' }}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14">
-          {/* Logo and Title */}
+          {/* Title */}
           <div 
-            className="flex items-center gap-1 cursor-pointer"
+            className="cursor-pointer"
             onClick={() => navigate('/')}
           >
-            <img src={logo} alt="Badbaado Aid Track" className="w-14 h-14 object-contain" />
             <h1 className="text-lg font-bold leading-tight" style={{ color: '#2563EB' }}>
               Badbaado Aid Track
             </h1>

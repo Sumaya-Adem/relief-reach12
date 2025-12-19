@@ -22,7 +22,7 @@ const statusConfig: Record<AreaStatus, { label: string; icon: React.ElementType;
   'fully-aided': {
     label: 'Fully Aided',
     icon: CheckCircle,
-    className: 'status-aided',
+    className: 'status-aided bg-green-100 text-green-800',
   },
   'duplicate-warning': {
     label: 'Duplicate Warning',
